@@ -33,8 +33,7 @@
             int indexParaDeletar = cpfs.FindIndex(cpf => cpf == cpfParaDeletar);
 
             if (indexParaDeletar == -1) {
-                Console.WriteLine("\nNão foi possivel deletar esta conta.");
-                Console.WriteLine("MOTIVO: Conta não encontrada.");
+                WriteColor("\nNão foi possivel deletar esta conta.\nMOTIVO: Conta não encontrada.", "Red");
                 Console.WriteLine("\nPressione qualquer tecla para continuar...");
                 Console.ReadKey();
             }
@@ -45,7 +44,7 @@
                 senhas.RemoveAt(indexParaDeletar);
                 saldos.RemoveAt(indexParaDeletar);
 
-                Console.WriteLine("\nConta deletada com sucesso.");
+                WriteColor("\nConta deletada com sucesso.", "Green");
                 Console.WriteLine("\nPressione qualquer tecla para continuar...");
                 Console.ReadKey();
             }
@@ -61,7 +60,7 @@
                 }
             }
             else {
-                Console.WriteLine("Não há contas registradas atualmente.");
+                WriteColor("Não há contas registradas atualmente.", "Red");
             }
             Console.WriteLine("\nPressione qualquer tecla para continuar...");
             Console.ReadKey();
@@ -80,8 +79,7 @@
             int indexParaPesquisar = cpfs.FindIndex(cpf => cpf == cpfParaApresentar);
 
             if (indexParaPesquisar == -1) {
-                Console.WriteLine("\nNão foi possivel apresentar esta conta.");
-                Console.WriteLine("MOTIVO: Conta não encontrada.");
+                WriteColor("\nNão foi possivel apresentar esta conta.\nMOTIVO: Conta não encontrada.", "Red");
             }
             else {
                 Console.WriteLine($"\nCPF = {cpfs[indexParaPesquisar]} \t|\t Titular = {titulares[indexParaPesquisar]}\t |\t Saldo = {saldos[indexParaPesquisar]}");
@@ -112,6 +110,20 @@
 
         }
 
+        static void WriteColor(string txt, string color) {
+            
+            if (color == "Red" || color == "red") {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine(txt);
+                Console.ResetColor();
+            }
+            else if (color == "Green" || color == "green") {
+                Console.ForegroundColor = ConsoleColor.Green;
+                System.Console.WriteLine(txt);
+                Console.ResetColor();
+            }
+        }
+
         static void FazerSaque(List<string> cpfs, List<string> titulares, List<double> saldos, List<string> senhas)
         {
             Console.Write("\nDigite o seu cpf:");
@@ -119,8 +131,7 @@
             int indexParaPesquisar = cpfs.FindIndex(cpf => cpf == cpfParaApresentar);
 
             if (indexParaPesquisar == -1) {
-                Console.WriteLine("\nConta não encontrada.");
-                Console.WriteLine("Confira o cpf e tente novamente.");
+                WriteColor("\nConta não encontrada.\nConfira o cpf e tente novamente.", "Red");
             }
             else {
                 Console.Write("Digite sua senha: ");
@@ -130,20 +141,21 @@
                 int contSenhaErrada = 3;
                 if (indexSenhaParaPesquisar == -1) {
                     contSenhaErrada -= 1;
-                    Console.WriteLine("\nSenha incorreta. Tente novamente");
-                    Console.WriteLine($"\nRestam {contSenhaErrada} tentativas.");
+                    WriteColor($"\nSenha incorreta. Tente novamente\nRestam {contSenhaErrada} tentativas.", "Red");
                 }
                 else {
                     Console.Write("Digite a quantia a ser sacada no formato: 0000,00: ");
                     double valorSaque = double.Parse(Console.ReadLine());
+                    double valorSaldoAtualizado = saldos[indexSenhaParaPesquisar] - valorSaque;
 
-                    if (saldos[indexParaPesquisar] > 0 || (valorSaque - saldos[indexParaPesquisar]) < 0) {
-                        saldos[indexParaPesquisar] -= valorSaque;
-                        Console.WriteLine("\nSaque efetuado.");
+                    if (valorSaldoAtualizado >= 0) {
+                        System.Console.WriteLine($"valorSaldoAtualizado = {valorSaldoAtualizado}");
+                        saldos[indexParaPesquisar] = valorSaldoAtualizado;
+                        WriteColor("\nSaque efetuado.", "Green");
                     }
                     else {
-                        Console.WriteLine("\nSaldo insuficiente.");
-                        Console.WriteLine($"Seu saldo atual é {saldos[indexParaPesquisar]:F2}");
+                        System.Console.WriteLine($"valorSaldoAtualizado = {valorSaldoAtualizado}");
+                        WriteColor($"\nSaldo insuficiente.\nSeu saldo atual é {saldos[indexParaPesquisar]:F2}", "Red");
                     }
                     
                     Console.WriteLine("\nPressione qualquer tecla para continuar...");
@@ -159,14 +171,13 @@
             int indexParaPesquisar = cpfs.FindIndex(cpf => cpf == cpfParaApresentar);
 
             if (indexParaPesquisar == -1) {
-                Console.WriteLine("\nConta não encontrada.");
-                Console.WriteLine("Confira o cpf e tente novamente.");
+                WriteColor("\nConta não encontrada.\nConfira o cpf e tente novamente.", "Red");
             }
             else {
-                Console.Write("\nDigite a quantia a ser depósitada no formato: 0000,00: ");
+                Console.Write("\nDigite a quantia a ser depositada no formato: 0000,00: ");
                 saldos[indexParaPesquisar] += double.Parse(Console.ReadLine());
                 
-                Console.WriteLine("\nDepósito efetuado.");
+                WriteColor("\nDepósito efetuado.", "Green");
 
                 Console.WriteLine("\nPressione qualquer tecla para continuar...");
                 Console.ReadKey();
@@ -194,7 +205,7 @@
                 
                 switch (option) {
                     case 0:
-                        Console.WriteLine("Estou encerrando o programa");
+                        Console.WriteLine("O programa está sendo encerrado...");
                         break;
                     case 1:
                         RegistrarNovoUsuario(cpfs, titulares, senhas, saldos);
