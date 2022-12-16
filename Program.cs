@@ -1,8 +1,35 @@
 ﻿namespace byteBank1 {
 
+    
+    
     public class Program {
 
-        static void showMenu() {
+        public static string GetPass() {
+            string pass = string.Empty;
+            ConsoleKey key;
+
+            do
+            {
+                var keyInfo = Console.ReadKey(intercept: true);
+                key = keyInfo.Key;
+
+                if (key == ConsoleKey.Backspace && pass.Length > 0)
+                {
+                    Console.Write("\b \b");
+                    pass = pass[0..^1];
+                }
+                else if (!char.IsControl(keyInfo.KeyChar))
+                {
+                    Console.Write("*");
+                    pass += keyInfo.KeyChar;
+                }
+            } while (key != ConsoleKey.Enter);
+            
+            Console.WriteLine();
+            return pass;
+        }
+
+        public static void showMenu() {
             Console.WriteLine("\n----------------------------------------");
             Console.WriteLine("1 - Inserir novo usuário");
             Console.WriteLine("2 - Deletar um usuário");
@@ -22,12 +49,11 @@
             Console.Write("Digite o nome: ");
             titulares.Add(Console.ReadLine());
             Console.Write("Insira a senha: ");
-            senhas.Add(Console.ReadLine());
-            // Console.Write("Digite o saldo: ");
+            senhas.Add(GetPass());
             saldos.Add(0);
         }
 
-        static void DeletarUsuario(List<string> cpfs, List<string> titulares, List<string> senhas, List<double> saldos) {
+        public static void DeletarUsuario(List<string> cpfs, List<string> titulares, List<string> senhas, List<double> saldos) {
             Console.WriteLine("Digite o cpf: ");
             string cpfParaDeletar = Console.ReadLine();
             int indexParaDeletar = cpfs.FindIndex(cpf => cpf == cpfParaDeletar);
@@ -50,7 +76,7 @@
             }
         }
 
-        static void ListarTodasAsContas(List<string> cpfs, List<string> titulares, List<double> saldos)
+        public static void ListarTodasAsContas(List<string> cpfs, List<string> titulares, List<double> saldos)
         {
             Console.WriteLine();
             
@@ -66,13 +92,13 @@
             Console.ReadKey();
         }
 
-        static void Soma(List<double> saldos) {
+        public static void Soma(List<double> saldos) {
             // return saldos.Aggregate(0.0, (x, y) => x + y); // Func / Delegate
             // return saldos.Sum();
             Console.WriteLine($"Total acumulado no banco: {saldos.Sum()}");
         }
 
-        static void ApresentarUsuario(List<string> cpfs, List<string> titulares, List<double> saldos) {
+        public static void ApresentarUsuario(List<string> cpfs, List<string> titulares, List<double> saldos) {
             
             Console.Write("Digite o cpf: ");
             string cpfParaApresentar = Console.ReadLine();
@@ -88,11 +114,11 @@
             }
         }
 
-        static void apresentaConta( int index, List<string> cpfs, List<string> titulares, List<double> saldos) {
+        public static void apresentaConta( int index, List<string> cpfs, List<string> titulares, List<double> saldos) {
             Console.WriteLine($"CPF = {cpfs[index]} | Titular = {titulares[index]} | Saldo = {saldos[index]}");
         }
 
-        static void QuantiaArmazenada(List<string> cpfs, List<string> titulares, List<double> saldos)
+        public static void QuantiaArmazenada(List<string> cpfs, List<string> titulares, List<double> saldos)
         {
             Console.WriteLine();
             Soma(saldos);
@@ -100,7 +126,7 @@
             Console.ReadKey();
         }
 
-        static void ManipularConta(List<string> cpfs, List<string> titulares, List<double> saldos) {
+        public static void ManipularConta(List<string> cpfs, List<string> titulares, List<double> saldos) {
             Console.WriteLine("\n----------------------------------------");
             Console.WriteLine("1 - Fazer um depósito");
             Console.WriteLine("2 - Fazer um saque");
@@ -110,7 +136,7 @@
 
         }
 
-        static void WriteColor(string txt, string color) {
+        public static void WriteColor(string txt, string color) {
             
             if (color == "Red" || color == "red") {
                 Console.ForegroundColor = ConsoleColor.Red;
@@ -124,7 +150,7 @@
             }
         }
 
-        static void FazerSaque(List<string> cpfs, List<string> titulares, List<double> saldos, List<string> senhas)
+        public static void FazerSaque(List<string> cpfs, List<string> titulares, List<double> saldos, List<string> senhas)
         {
             Console.Write("\nDigite o seu cpf:");
             string cpfParaApresentar = Console.ReadLine();
@@ -135,7 +161,7 @@
             }
             else {
                 Console.Write("Digite sua senha: ");
-                string senhaParaApresentar = Console.ReadLine();
+                string senhaParaApresentar = GetPass();
                 int indexSenhaParaPesquisar = senhas.FindIndex(senha => senha == senhaParaApresentar);
             
                 int contSenhaErrada = 3;
@@ -164,7 +190,7 @@
             }
         }
 
-        static void FazerDeposito(List<string> cpfs, List<string> titulares, List<double> saldos)
+        public static void FazerDeposito(List<string> cpfs, List<string> titulares, List<double> saldos)
         {
             Console.Write("\nDigite o cpf do titular:");
             string cpfParaApresentar = Console.ReadLine();
