@@ -36,13 +36,13 @@
             Console.WriteLine("3 - Listar todas as contas registradas");
             Console.WriteLine("4 - Detalhes de um usuário");
             Console.WriteLine("5 - Quantia armazenada no banco");
-            Console.WriteLine("6 - Manipular a conta");
+            Console.WriteLine("6 - Operações da conta");
             Console.WriteLine("0 - Para sair do programa");
             Console.WriteLine("----------------------------------------");
             Console.Write("\nDigite a opção desejada: ");
         }
 
-        private static void RegistrarNovoUsuario(List<string> cpfs, List<string> titulares, List<string> senhas, List<double> saldos)
+        private static void RegistrarNovoUsuario(List<string> cpfs, List<string> titulares, List<string> senhas, List<double> saldos, List<string> chavesPIX)
         {
             Console.Write("Digite o cpf: ");
             cpfs.Add(Console.ReadLine());
@@ -51,6 +51,7 @@
             Console.Write("Insira a senha: ");
             senhas.Add(GetPass());
             saldos.Add(0);
+            chavesPIX.Add("0");
         }
 
         public static void DeletarUsuario(List<string> cpfs, List<string> titulares, List<string> senhas, List<double> saldos) {
@@ -128,9 +129,11 @@
 
         public static void ManipularConta(List<string> cpfs, List<string> titulares, List<double> saldos) {
             Console.WriteLine("\n----------------------------------------");
-            Console.WriteLine("1 - Fazer um depósito");
-            Console.WriteLine("2 - Fazer um saque");
-            Console.WriteLine("9 - Voltar para o menu anterior");
+            Console.WriteLine("[1] - Fazer um depósito");
+            Console.WriteLine("[2] - Fazer um saque");
+            Console.WriteLine("[3] - Fazer um PIX");
+            Console.WriteLine("[4] - Receber um PIX");
+            Console.WriteLine("[9] - Voltar para o menu anterior");
             Console.WriteLine("----------------------------------------");
             Console.Write("\nDigite a opção desejada: ");
 
@@ -149,7 +152,7 @@
                 Console.ResetColor();
             }
         }
-
+        
         public static void FazerSaque(List<string> cpfs, List<string> titulares, List<double> saldos, List<string> senhas)
         {
             Console.Write("\nDigite o seu cpf:");
@@ -157,7 +160,7 @@
             int indexParaPesquisar = cpfs.FindIndex(cpf => cpf == cpfParaApresentar);
 
             if (indexParaPesquisar == -1) {
-                WriteColor("\nConta não encontrada.\nConfira o cpf e tente novamente.", "Red");
+                WriteColor("\nConta não encontrada.\nConfira o CPF e tente novamente.", "Red");
             }
             else {
                 Console.Write("Digite sua senha: ");
@@ -167,10 +170,10 @@
                 int contSenhaErrada = 3;
                 if (indexSenhaParaPesquisar == -1) {
                     contSenhaErrada -= 1;
-                    WriteColor($"\nSenha incorreta. Tente novamente\nRestam {contSenhaErrada} tentativas.", "Red");
+                    WriteColor($"\nSenha incorreta. Tente novamente.\nRestam {contSenhaErrada} tentativas.", "Red");
                 }
                 else {
-                    Console.Write("Digite a quantia a ser sacada no formato: 0000,00: ");
+                    Console.Write("\nDigite a quantia a ser sacada no formato: 0000,00: ");
                     double valorSaque = double.Parse(Console.ReadLine());
                     double valorSaldoAtualizado = saldos[indexSenhaParaPesquisar] - valorSaque;
 
@@ -211,6 +214,82 @@
 
         }
 
+        public static void FazerPIX(List<string> cpfs, List<string> titulares, List<double> saldos, List<string> senhas, List<string> chavesPIX) {
+            Console.Write("\nDigite o seu CPF: ");
+            string cpfParaApresentar = Console.ReadLine();
+            int indexParaPesquisar = cpfs.FindIndex(cpf => cpf == cpfParaApresentar);
+
+            if (indexParaPesquisar == -1) {
+                WriteColor("\nConta não encontrada", "Red");
+            }
+            else {
+                Console.Write("\nDigite a chave PIX do titular:");
+                string chaveTitularParaApresentar = Console.ReadLine();
+                int indexTitularParaPesquisar = chavesPIX.FindIndex(cpf => cpf == chaveTitularParaApresentar);
+
+                if (indexTitularParaPesquisar == -1) {
+                    WriteColor("\nConta não encontrada.\nConfira a chave e tente novamente.", "Red");
+                }
+                else {
+                    Console.Write("\nDigite a quantia a ser transferida no formato: 0000,00: ");
+                    double valor = double.Parse(Console.ReadLine());
+                    
+                    if (saldos[indexParaPesquisar] - valor >= 0) {
+                        saldos[indexParaPesquisar] -= valor;
+                        saldos[indexTitularParaPesquisar] += valor;
+                        WriteColor($"\nTransferência PIX para {titulares[indexTitularParaPesquisar]} efetuado.", "Green");
+                    }
+                    else {
+                        WriteColor($"\nSaldo insuficiente.\nSeu saldo atual é {saldos[indexParaPesquisar]:F2}", "Red");
+                    }
+                    
+
+                    Console.WriteLine("\nPressione qualquer tecla para continuar...");
+                    Console.ReadKey();
+                }
+            }
+        }
+
+
+        public static void ReceberPIX(List<string> cpfs, List<string> titulares, List<double> saldos, List<string> senhas, List<string> chavesPIX) {
+            Console.Write("\nDigite o CPF do titular: ");
+            string cpfParaApresentar = Console.ReadLine();
+            int indexParaPesquisar = cpfs.FindIndex(cpf => cpf == cpfParaApresentar);
+
+            if (indexParaPesquisar == -1) {
+                WriteColor("\nConta não encontrada.\nConfira o CPF e tente novamente.", "Red");
+            }
+            else {
+                Console.Write("\nDigite sua senha:");
+                string senhaParaApresentar = GetPass();
+                int indexSenhaParaPesquisar = senhas.FindIndex(senha => senha == senhaParaApresentar);
+
+                int contSenhaErrada = 3;
+                if (indexSenhaParaPesquisar == -1) {
+                    contSenhaErrada -= 1;
+                    WriteColor($"\nSenha incorreta. Tente novamente.\nRestam {contSenhaErrada} tentativas.", "Red");
+                }
+                else {
+                    if (chavesPIX[indexParaPesquisar] == "0") {
+                        chavesPIX[indexParaPesquisar] = RandomString(16);
+                    }
+                    
+                    Console.WriteLine("\nEsta é a sua chave PIX gerada aleatoriamente.\nCompartilhe ela para receber um PIX:");
+                    WriteColor($"\n{chavesPIX[indexParaPesquisar]}", "Green");
+                }
+            }
+
+        }
+
+        private static Random random = new Random();
+
+        public static string RandomString(int length)
+        {
+            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz";
+            return new string(Enumerable.Repeat(chars, length)
+                .Select(s => s[random.Next(s.Length)]).ToArray());
+        }
+
         public static void Main(string[] args) {
 
             Console.WriteLine("Antes de começar a usar, vamos configurar alguns valores: ");
@@ -222,6 +301,7 @@
             List<string> titulares = new List<string>();
             List<string> senhas = new List<string>();
             List<double> saldos = new List<double>();
+            List<string> chavesPIX = new List<string>();
 
             int option;
 
@@ -234,7 +314,7 @@
                         Console.WriteLine("O programa está sendo encerrado...");
                         break;
                     case 1:
-                        RegistrarNovoUsuario(cpfs, titulares, senhas, saldos);
+                        RegistrarNovoUsuario(cpfs, titulares, senhas, saldos, chavesPIX);
                         break;
                     case 2:
                         DeletarUsuario(cpfs, titulares, senhas, saldos);
@@ -260,6 +340,12 @@
                                     break;
                                 case 2:
                                     FazerSaque(cpfs, titulares, saldos, senhas);
+                                    break;
+                                case 3:
+                                    FazerPIX(cpfs, titulares, saldos, senhas, chavesPIX);
+                                    break;
+                                case 4:
+                                    ReceberPIX(cpfs, titulares, saldos, senhas, chavesPIX);
                                     break;
                                 case 9:
                                     break;
