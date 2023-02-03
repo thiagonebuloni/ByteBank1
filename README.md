@@ -16,5 +16,7 @@ Atualmente o projeto está em fase de produção e testes.
 
 ## Será implementado em breve:
 
+* Validação CPF
+* Refatoração do tratamento de erros
 * Transferência PIX
 * Gravação das contas em JSON
