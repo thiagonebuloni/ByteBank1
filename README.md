@@ -13,10 +13,11 @@ Atualmente o projeto está em fase de produção e testes.
 * Mostrar quantia total depositada no banco
 * Depósito em contas
 * Saque
+* Gravação das contas em JSON
 
 ## Será implementado em breve:
 
 * Validação CPF
 * Refatoração do tratamento de erros
 * Transferência PIX
-* Gravação das contas em JSON
+
